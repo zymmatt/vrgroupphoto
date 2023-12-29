@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.mapper.UserMapper">
+    <!-- 定义一个resultMap，用于将数据库表的列映射到User实体类的字段 -->
+    <resultMap id="UserResultMap" type="com.example.admin.entity.User.User">
+        <id column="id" property="id"/>
+        <result column="userid" property="userid"/>
+        <result column="name" property="name"/>
+        <result column="company" property="company"/>
+        <result column="email" property="email"/>
+        <result column="line" property="line"/>
+        <result column="trigger_timestamp" property="trigger_timestamp"/>
+        <result column="photoURL" property="photoURL"/>
+        <!-- 其他字段 -->
+    </resultMap>
+
+    <select id="findAll"  resultMap="UserResultMap">
+        SELECT id, userid, name, company, email, line, photoURL, trigger_timestamp
+        from expoverse.vrphoto ORDER BY id ASC;
+    </select>
+
+    <select id="findAllwaiting" resultMap="UserResultMap">
+        SELECT id, userid, name, company, email, photoURL
+        from expoverse.vrphoto
+        where photoURL is NULL
+        ORDER BY id ASC;
+    </select>
+
+    <select id="findName"  resultMap="UserResultMap">
+        SELECT id, userid, name, company, email, photoURL
+        from expoverse.vrphoto
+        WHERE name = #{name}
+    </select>
+
+    <select id="getNext" resultMap="UserResultMap">
+        SELECT id, userid, name, company, email, photoURL
+        from expoverse.vrphoto
+        where photoURL is NULL
+        ORDER BY id DESC
+        limit 1;
+    </select>
+
+    <insert id="createUser" parameterType="com.example.admin.entity.User.User"
+        useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO expoverse.vrphoto (userid, name, company, email, line)
+        VALUES (#{userid}, #{name}, #{company}, #{email}, #{line})
+    </insert>
+
+    <update id="submitPhoto" parameterType="com.example.admin.entity.User.User">
+        UPDATE expoverse.vrphoto SET photoURL = #{photoURL}, trigger_timestamp = #{trigger_timestamp}
+        WHERE userid = #{userid}
+    </update>
+
+    <update id="updateUser" parameterType="com.example.admin.entity.User.User">
+        UPDATE expoverse.vrphoto
+        SET name = #{name}, company = #{company} , email = #{email}, line = #{line}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM expoverse.vrphoto WHERE id = #{id}
+    </delete>
+
+</mapper>
